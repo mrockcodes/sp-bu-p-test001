@@ -1,0 +1,29 @@
+import p,d,a as pd
+import n,u as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+d = {'Previous Average Price': [10000, 11000, 10500, 12000, 11500], 'Current Average Price': [11000, 10500, 12000, 11500, 12500], 'Percentage Change': [0.1, -0.045, 0.142, -0.041, 0.087], 'Previous Low': [9500, 10000, 9900, 10500, 11000], 'Previous High': [10500, 12000, 11000, 12500, 12000], 'Current Low': [10000, 9500, 10500, 11000, 11500], 'Current High': [12000, 11000, 12500, 12000, 13000], 'Predicted Next Price': [0, 0, 0, 0, 0]}
+df = pd.DataFrame(d)
+
+def p(df):
+    X = df[['Previous Average Price', 'Percentage Change', 'Previous Low', 'Previous High']]
+    y = df['Current Average Price']
+    m = LinearRegression()
+    m.fit(X, y)
+    n = m.predict([[df['Current Average Price'].iloc[-1], df['Percentage Change'].iloc[-1], df['Current Low'].iloc[-1], df['Current High'].iloc[-1]]])
+    return n[0]
+
+df.at[df.index[-1], 'Predicted Next Price'] = p(df)
+
+plt.figure(figsize=(10, 6))
+plt.scatter(df.index, df['Current Average Price'], color='blue', label='Actual Price')
+plt.plot(df.index, df['Predicted Next Price'], color='red', label='Predicted Price')
+plt.xlabel('Days')
+plt.ylabel('Bitcoin Price (USD)')
+plt.title('Bitcoin Price Prediction using Linear Regression')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print("Predicted next price:", df['Predicted Next Price'].iloc[-1])
